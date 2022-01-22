@@ -20,7 +20,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, ParseException {
-        // TODO code application logic here
+        
 
         String fileHonosBasic = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleesbestandHonosBasis.csv";
         String fileCodelijst = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\CodelijstZorgvraagtypering.csv";

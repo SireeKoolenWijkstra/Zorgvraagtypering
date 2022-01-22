@@ -19,6 +19,8 @@ public class CalculateZorgvraagtype {
      * For type 1 sum up all the scores for that type (eg score question 1 + question 2 + questions 3 etc)
      * Do so again for type 2, etc etc
      * Put the answers in a dictionary 
+    
+     * Missing type 9 is not a problem because we use a hashmap
      */
     public HashMap<String, Double> scorePerTypePerRecord(
             CSVRecord patiënt,

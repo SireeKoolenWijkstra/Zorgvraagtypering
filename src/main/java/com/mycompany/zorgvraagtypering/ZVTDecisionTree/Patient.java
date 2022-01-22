@@ -10,11 +10,12 @@ package com.mycompany.zorgvraagtypering.ZVTDecisionTree;
  * @author Siree
  */
 public class Patient {
-    int[] honosScore;
-    int zorgvraagtype;
-
-    Patient(int[] i, int zorgvraagtype) {
+    
+    int [] honosScore;
+    
+    public Patient(int[] i){
         this.honosScore = i;
-        this.zorgvraagtype = zorgvraagtype;
     }
+
+    
 }

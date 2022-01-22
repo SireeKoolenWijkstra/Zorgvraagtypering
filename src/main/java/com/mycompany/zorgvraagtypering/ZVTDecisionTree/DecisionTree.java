@@ -13,24 +13,31 @@ import java.util.ArrayList;
  */
 public interface DecisionTree {
 
-    public static double calculateWeightedEntropy(ArrayList<Patient> patientsLeft, ArrayList<Patient> patientsRight) {       
+    public static double calculateWeightedEntropy(ArrayList<PatientWithZVT> patientsLeft, ArrayList<PatientWithZVT> patientsRight) {
         double entropyLeft = entropy(patientsLeft);
         double entropyRight = entropy(patientsRight);
         int population = patientsLeft.size() + patientsRight.size();
-        
+
         return (entropyLeft * patientsLeft.size() + entropyRight * patientsRight.size()) / population;
     }
 
-    public static double entropy(ArrayList<Patient> patients) {
+    public static double entropy(ArrayList<PatientWithZVT> patients) {
         assert !patients.isEmpty();
 
-        int[] aantalPtPerZVT = new int[20];
-        for (Patient patient : patients) {
-            aantalPtPerZVT[patient.zorgvraagtype]++;
+        int[] perZVTaantalPt = new int[20];
+        for (PatientWithZVT patient : patients) {
+            //If statementchecks because ZVT 9 doesn't exist and ZVTtypes go up to ZVT21 (problem due to indexing)
+
+            if (patient.zorgvraagtype < 9) {
+                perZVTaantalPt[patient.zorgvraagtype - 1]++;
+            } else {
+                perZVTaantalPt[patient.zorgvraagtype - 2]++;
+            }
+
         }
 
         double totaal = 0;
-        for (int nrOfPt : aantalPtPerZVT) {
+        for (int nrOfPt : perZVTaantalPt) {
             double proportion = nrOfPt / (double) patients.size();
             if (proportion != 0) {
                 totaal -= proportion * Math.log(proportion);
@@ -49,7 +56,7 @@ public interface DecisionTree {
             (https://towardsdatascience.com/entropy-and-information-gain-in-decision-trees-c7db67a3a293) en sla de split op als die beter is
     2. maak the node met de gegevens van stap 1      
      */
-    public static DecisionTree createNode(ArrayList<Patient> trainingGroup) {
+    public static DecisionTree createNode(ArrayList<PatientWithZVT> trainingGroup) {
         //Kijk of alle patiënten dezelfde zorgvraagtypering hebben, zo ja dan return je een nodeleaf
         int zorgvraagtypering = trainingGroup.get(0).zorgvraagtype;
         boolean oneZorgvraagtypering = true;
@@ -62,9 +69,9 @@ public interface DecisionTree {
             return new NodeLeaf(zorgvraagtypering);
         }
         double bestValueOfSplit = Double.POSITIVE_INFINITY; //Hoe schever de de verdeling over de zorgvraagtyperingen, hoe lager de entropy(wat beter is)
-        ArrayList<Patient> goodSplitofPatientsLeft = null; // is null omdat bestValueOfSplit altijd het allerslechte is en dus goodSplitofPatiensLeft 
+        ArrayList<PatientWithZVT> goodSplitofPatientsLeft = null; // is null omdat bestValueOfSplit altijd het allerslechte is en dus goodSplitofPatiensLeft 
         //altijd wordt gevuld
-        ArrayList<Patient> goodSplitofPatientsRight = null;// is null omdat bestValueOfSplit altijd het allerslechte is en dus goodSplitofPatiensRight 
+        ArrayList<PatientWithZVT> goodSplitofPatientsRight = null;// is null omdat bestValueOfSplit altijd het allerslechte is en dus goodSplitofPatiensRight 
         //altijd wordt gevuld
         int nodeForkHonosVraag = 0;
         int nodeForkThreshold = 0;
@@ -72,16 +79,22 @@ public interface DecisionTree {
         //zie stap 1 en 1.a
         for (int honosVraag = 0; honosVraag < 12; honosVraag++) {
             for (int threshold = 0; threshold < 5; threshold++) {
-                ArrayList<Patient> patientsLeft = new ArrayList<Patient>();
-                ArrayList<Patient> patientsRight = new ArrayList<Patient>();
+                ArrayList<PatientWithZVT> patientsLeft = new ArrayList<PatientWithZVT>();
+                ArrayList<PatientWithZVT> patientsRight = new ArrayList<PatientWithZVT>();
                 for (var patient : trainingGroup) {
-                    if (patient.honosScore[honosVraag] < threshold) {
+                    if (patient.patient.honosScore[honosVraag] < threshold) {
                         patientsLeft.add(patient);
-                    }else{patientsRight.add(patient);}
-                    
+                    } else {
+                        patientsRight.add(patient);
+                    }
+
                 }
-                if(patientsLeft.isEmpty()){continue;}
-                if(patientsRight.isEmpty()){continue;}
+                if (patientsLeft.isEmpty()) {
+                    continue;
+                }
+                if (patientsRight.isEmpty()) {
+                    continue;
+                }
                 //zie stap 1.b
                 double valueOfSplit = calculateWeightedEntropy(patientsLeft, patientsRight);
                 if (valueOfSplit < bestValueOfSplit) {
