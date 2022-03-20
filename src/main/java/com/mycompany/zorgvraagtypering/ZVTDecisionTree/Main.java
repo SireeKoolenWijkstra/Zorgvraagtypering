@@ -6,6 +6,7 @@
 package com.mycompany.zorgvraagtypering.ZVTDecisionTree;
 
 import com.mycompany.zorgvraagtypering.ReadCSVFile;
+import com.mycompany.zorgvraagtypering.ZVTDecisionTree.DecisionTree.TreeAndE;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -19,55 +20,82 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, Exception {
-
-        var input = reallearningdata();
-        int goed = 0;
-        int fout = 0;
+        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
         
-        
-        
-        for (int i = 0; i <input.size();i++){
-             ArrayList<PatientWithZVT> workdata = (ArrayList<PatientWithZVT>)input.clone();
-             workdata.remove(i);
-            var decisionTree = DecisionTree.createNode(workdata);
-            int ZVT = decisionTree.typeer(input.get(i).patient);
-            
-            if (ZVT == input.get(i).zorgvraagtype){
-                goed++;
-            }else{
-                fout++;
-            }
-        }
-        System.out.println("goed = " + goed + ", fout = " + fout);
-
+/*
+        test om calculate error te testen
+       PatientWithZVT tom = new PatientWithZVT(new Patient(new int[]{0, 2, 4, 3, 1, 2, 4, 0, 0, 4, 1, 1}), 7);
+       PatientWithZVT julia = new PatientWithZVT(new Patient(new int[]{0, 2, 2, 2, 1, 0, 4, 0, 0, 4, 1, 1}), 1);
+       
+       ArrayList <PatientWithZVT> workdata = new ArrayList<PatientWithZVT>();
+       
+       workdata.add(tom);
+       workdata.add(julia);
+*/
+       ArrayList<PatientWithZVT> trainingdata = readtrainingdata(inleespatientsdata);
+       
+       crossvalidate(trainingdata);
+       TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata);
+       treeAndEDecisiontree.decisiontree.print("");
     }
 
     public static ArrayList<PatientWithZVT> testlearningdata() throws Exception {
 
-        PatientWithZVT tom = new PatientWithZVT(new Patient(new int[]{0, 2, 4, 3, 1, 2, 4, 0, 0, 4, 1, 1}), 7);
-        PatientWithZVT julia = new PatientWithZVT(new Patient(new int[]{0, 2, 2, 2, 1, 0, 4, 0, 0, 4, 1, 1}), 1);
-        PatientWithZVT henk = new PatientWithZVT(new Patient(new int[]{0, 1, 2, 4, 1, 0, 2, 0, 0, 4, 1, 1}), 6);
-        PatientWithZVT ingrid = new PatientWithZVT(new Patient(new int[]{0, 1, 3, 4, 1, 0, 2, 0, 0, 4, 1, 1}), 7);
-        PatientWithZVT mergel = new PatientWithZVT(new Patient(new int[]{0, 1, 3, 4, 1, 0, 2, 0, 0, 4, 1, 1}), 23);
-        PatientWithZVT ingridde = new PatientWithZVT(new Patient(new int[]{0, 1, 3, 4, 1, 0, 2, 0, 0, 4, 1, 1}), 9);
+        PatientWithZVT p1 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}), 1);
+        PatientWithZVT p2 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}), 2);
+        /*
+        PatientWithZVT p3 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0}), 3);
+        PatientWithZVT p4 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0}), 4);
+        PatientWithZVT p5 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0}), 5);
+        PatientWithZVT p6 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}), 6);
+        PatientWithZVT p7 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0}), 7);
+        PatientWithZVT p8 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0}), 8);
+        PatientWithZVT p21 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0}), 21);
+        PatientWithZVT p10 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}), 10);
+        PatientWithZVT p11 = new PatientWithZVT(new Patient(new int[]{0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0}), 11);
+        PatientWithZVT p12 = new PatientWithZVT(new Patient(new int[]{0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}), 12);
+        PatientWithZVT p13 = new PatientWithZVT(new Patient(new int[]{4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}), 13);
+        PatientWithZVT p14 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1}), 14);
+        PatientWithZVT p15 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0}), 15);
+        PatientWithZVT p16 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0}), 16);
+        PatientWithZVT p17 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0}), 17);
+        PatientWithZVT p18 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}), 18);
+        PatientWithZVT p19 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0}), 19);
+        PatientWithZVT p20 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0}), 20);
+        */
 
         ArrayList<PatientWithZVT> patients = new ArrayList<PatientWithZVT>();
-        patients.add(henk);
-        patients.add(ingrid);
-        patients.add(ingridde);
-        patients.add(julia);
-        patients.add(tom);
-        patients.add(mergel);
+        patients.add(p1);
+        /*patients.add(p2);
+        patients.add(p3);
+        patients.add(p4);
+        patients.add(p5);
+        patients.add(p6);
+        patients.add(p7);
+        patients.add(p8);
+        patients.add(p21);
+        patients.add(p10);
+        patients.add(p11);
+        patients.add(p12);
+         patients.add(p13);
+        patients.add(p14);
+        patients.add(p15);
+        patients.add(p16);
+        patients.add(p17);
+        patients.add(p18);
+        patients.add(p19);
+        patients.add(p20);
+        */
 
         return patients;
     }
 
-    public static ArrayList<PatientWithZVT> reallearningdata() throws IOException, Exception {
-        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
+    public static ArrayList<PatientWithZVT> readtrainingdata(String inleespatientsdatafile) throws IOException, Exception {
+        
         ArrayList<PatientWithZVT> patients = new ArrayList<PatientWithZVT>();
         ReadCSVFile readCSVFile = new ReadCSVFile();
 
-        for (var line : readCSVFile.parseHONOSBasic(inleespatientsdata)) {
+        for (var line : readCSVFile.parseHONOSBasic(inleespatientsdatafile)) {
 
             int[] honosAnswers = new int[12];
             int zorgtype = Integer.parseInt(line.get(13));
@@ -82,6 +110,8 @@ public class Main {
 
         return patients;
     }
+    
+    
     public static ArrayList<Patient> readInputfileToBeTypedPatients() throws IOException, Exception {
         String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
         ArrayList<Patient >patients = new ArrayList<Patient>();
@@ -99,5 +129,36 @@ public class Main {
 
         return patients;
     }
+    
+    
+    public static void crossvalidate(ArrayList <PatientWithZVT> trainingdata)throws IOException, Exception{
+ 
+        int goed = 0;
+        int fout = 0;
+        
+        /*
+        cross validation, ik train op 1 minder dan wat er aan input is
+        */
+        
+        for (int i = 0; i <trainingdata.size();i++){
+             ArrayList<PatientWithZVT> workdata = (ArrayList<PatientWithZVT>)trainingdata.clone();
+             workdata.remove(i);
+            TreeAndE treeAndEDecisiontree = DecisionTree.createNode(workdata);
+            int ZVT = treeAndEDecisiontree.decisiontree.typeer(trainingdata.get(i).patient);
+            
+            if (ZVT == trainingdata.get(i).zorgvraagtype){
+                goed++;
+            }else{
+                System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);
+                fout++;
+            }
+        }
+        System.out.println("goed = " + goed + ", fout = " + fout);
+        System.out.println("--------------------------------------------------------------------------");
+        
+        
+    
+    }
+    
 
 }

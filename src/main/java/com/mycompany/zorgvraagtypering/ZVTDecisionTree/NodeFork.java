@@ -31,4 +31,13 @@ public class NodeFork implements DecisionTree {
             return right.typeer(patient);
         }
     }
+
+    public void print(String indent) {
+
+        System.out.println(indent + "Hvr:" + this.honosVraag + " ----Th" + this.threshold);
+        System.out.println(indent + "  +---->");
+        right.print       (indent + "  |     ");
+        System.out.println(indent + "  +---->");
+        left.print        (indent + "        ");
+    }
 }

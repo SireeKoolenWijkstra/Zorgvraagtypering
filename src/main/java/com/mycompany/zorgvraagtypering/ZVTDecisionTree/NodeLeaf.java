@@ -16,6 +16,9 @@ public class NodeLeaf implements DecisionTree {
     int zorgvraagtypering;
 
     NodeLeaf(int zorgvraagtypering) {
+        assert zorgvraagtypering > 0;
+        assert zorgvraagtypering != 9;
+        assert zorgvraagtypering < 22;
         this.zorgvraagtypering = zorgvraagtypering;
     }
 
@@ -23,4 +26,9 @@ public class NodeLeaf implements DecisionTree {
     public int typeer(Patient patient) {
         return zorgvraagtypering;
     }
+
+    public void print(String indent) {
+        System.out.println(indent + zorgvraagtypering);
+    }
+
 }
