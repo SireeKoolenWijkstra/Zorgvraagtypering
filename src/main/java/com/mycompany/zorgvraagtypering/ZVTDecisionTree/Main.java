@@ -19,10 +19,13 @@ public class Main {
     /**
      * @param args the command line arguments
      */
+    public static double testing_z = 0.0;
+
     public static void main(String[] args) throws IOException, Exception {
         String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
-        
-/*
+
+
+        /*
         test om calculate error te testen
        PatientWithZVT tom = new PatientWithZVT(new Patient(new int[]{0, 2, 4, 3, 1, 2, 4, 0, 0, 4, 1, 1}), 7);
        PatientWithZVT julia = new PatientWithZVT(new Patient(new int[]{0, 2, 2, 2, 1, 0, 4, 0, 0, 4, 1, 1}), 1);
@@ -31,12 +34,17 @@ public class Main {
        
        workdata.add(tom);
        workdata.add(julia);
-*/
-       ArrayList<PatientWithZVT> trainingdata = readtrainingdata(inleespatientsdata);
-       
-       crossvalidate(trainingdata);
-       TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata);
-       treeAndEDecisiontree.decisiontree.print("");
+         */
+        ArrayList<PatientWithZVT> trainingdata = readtrainingdata(inleespatientsdata);
+
+        for (int i = 0; i < 1000; i++) {
+            
+            crossvalidate(trainingdata);
+            TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata);
+            testing_z = testing_z + 0.1;
+            //treeAndEDecisiontree.decisiontree.print("");
+        }
+
     }
 
     public static ArrayList<PatientWithZVT> testlearningdata() throws Exception {
@@ -62,7 +70,7 @@ public class Main {
         PatientWithZVT p18 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}), 18);
         PatientWithZVT p19 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0}), 19);
         PatientWithZVT p20 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0}), 20);
-        */
+         */
 
         ArrayList<PatientWithZVT> patients = new ArrayList<PatientWithZVT>();
         patients.add(p1);
@@ -85,13 +93,13 @@ public class Main {
         patients.add(p18);
         patients.add(p19);
         patients.add(p20);
-        */
+         */
 
         return patients;
     }
 
     public static ArrayList<PatientWithZVT> readtrainingdata(String inleespatientsdatafile) throws IOException, Exception {
-        
+
         ArrayList<PatientWithZVT> patients = new ArrayList<PatientWithZVT>();
         ReadCSVFile readCSVFile = new ReadCSVFile();
 
@@ -101,7 +109,7 @@ public class Main {
             int zorgtype = Integer.parseInt(line.get(13));
 
             for (int i = 1; i < 13; i++) {
-                honosAnswers[i-1] = Integer.parseInt(line.get(i));
+                honosAnswers[i - 1] = Integer.parseInt(line.get(i));
             }
             Patient patient = new Patient(honosAnswers);
             PatientWithZVT WithZVT = new PatientWithZVT(patient, zorgtype);
@@ -110,18 +118,17 @@ public class Main {
 
         return patients;
     }
-    
-    
+
     public static ArrayList<Patient> readInputfileToBeTypedPatients() throws IOException, Exception {
         String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
-        ArrayList<Patient >patients = new ArrayList<Patient>();
+        ArrayList<Patient> patients = new ArrayList<Patient>();
         ReadCSVFile readCSVFile = new ReadCSVFile();
 
         for (var line : readCSVFile.parseHONOSBasic(inleespatientsdata)) {
 
             int[] honosAnswers = new int[12];
             for (int i = 1; i < 13; i++) {
-                honosAnswers[i-1] = Integer.parseInt(line.get(i));
+                honosAnswers[i - 1] = Integer.parseInt(line.get(i));
             }
             Patient patient = new Patient(honosAnswers);
             patients.add(patient);
@@ -129,36 +136,30 @@ public class Main {
 
         return patients;
     }
-    
-    
-    public static void crossvalidate(ArrayList <PatientWithZVT> trainingdata)throws IOException, Exception{
- 
+
+    public static void crossvalidate(ArrayList<PatientWithZVT> trainingdata) throws IOException, Exception {
+
         int goed = 0;
         int fout = 0;
-        
+
         /*
         cross validation, ik train op 1 minder dan wat er aan input is
-        */
-        
-        for (int i = 0; i <trainingdata.size();i++){
-             ArrayList<PatientWithZVT> workdata = (ArrayList<PatientWithZVT>)trainingdata.clone();
-             workdata.remove(i);
+         */
+        for (int i = 0; i < trainingdata.size(); i++) {
+            ArrayList<PatientWithZVT> workdata = (ArrayList<PatientWithZVT>) trainingdata.clone();
+            workdata.remove(i);
             TreeAndE treeAndEDecisiontree = DecisionTree.createNode(workdata);
             int ZVT = treeAndEDecisiontree.decisiontree.typeer(trainingdata.get(i).patient);
-            
-            if (ZVT == trainingdata.get(i).zorgvraagtype){
+
+            if (ZVT == trainingdata.get(i).zorgvraagtype) {
                 goed++;
-            }else{
-                System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);
+            } else {
+                //System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);
                 fout++;
             }
         }
-        System.out.println("goed = " + goed + ", fout = " + fout);
-        System.out.println("--------------------------------------------------------------------------");
-        
-        
-    
+        System.out.println(testing_z + ";" + goed + ";" + fout + ";");
+
     }
-    
 
 }

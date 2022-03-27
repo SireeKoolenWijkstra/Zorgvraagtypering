@@ -205,7 +205,8 @@ public interface DecisionTree {
         double f = (double) E / N;
         //e is de ophoging van f naar een pessimistich geschatte echte errorwaarde, berekening is terug te vinden op 
         //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69. 
-        double z = 0.69;
+        //double z = 0.69;
+        double z = Main.testing_z;
         double e = (f + ((z * z) / (2 * N)) + z * Math.sqrt((f / N) - ((f * f) / N) + ((z * z) / (4 * N * N)))) / (1 + (z * z) / N);
         return e;
     }
