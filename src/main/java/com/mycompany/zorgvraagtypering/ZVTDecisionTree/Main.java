@@ -19,7 +19,6 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static double testing_z = 0.0;
 
     public static void main(String[] args) throws IOException, Exception {
         String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
@@ -37,13 +36,10 @@ public class Main {
          */
         ArrayList<PatientWithZVT> trainingdata = readtrainingdata(inleespatientsdata);
 
-        for (int i = 0; i < 1000; i++) {
             
             crossvalidate(trainingdata);
             TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata);
-            testing_z = testing_z + 0.1;
-            //treeAndEDecisiontree.decisiontree.print("");
-        }
+            treeAndEDecisiontree.decisiontree.print("");
 
     }
 
@@ -154,11 +150,12 @@ public class Main {
             if (ZVT == trainingdata.get(i).zorgvraagtype) {
                 goed++;
             } else {
-                //System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);
+                System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);
                 fout++;
             }
         }
-        System.out.println(testing_z + ";" + goed + ";" + fout + ";");
+        System.out.println(goed + ";" + fout + ";");
+        
 
     }
 
