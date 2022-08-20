@@ -21,7 +21,7 @@ public class Main {
      */
 
     public static void main(String[] args) throws IOException, Exception {
-        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamenmetcorrectie.csv";
+        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleesbestandHonosBasis.csv";
         
         //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69 according to sorry, according to my calculations 3,4 is the most optimal value.
         double z = 3.4;
@@ -48,8 +48,8 @@ public class Main {
 
     public static ArrayList<PatientWithZVT> testlearningdata() throws Exception {
 
-        PatientWithZVT p1 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}), 1);
-        PatientWithZVT p2 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}), 2);
+        PatientWithZVT p1 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "Centrum"), 1);
+        PatientWithZVT p2 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, "Zuidoost"), 2);
         /*
         PatientWithZVT p3 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0}), 3);
         PatientWithZVT p4 = new PatientWithZVT(new Patient(new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0}), 4);
@@ -103,14 +103,24 @@ public class Main {
         ReadCSVFile readCSVFile = new ReadCSVFile();
 
         for (var line : readCSVFile.parseHONOSBasic(inleespatientsdatafile)) {
-
+            /*header van inleesbestand is: 
+            0: KLNT_NUMMER	
+            1: KLNT_VOORLETTERS
+            2: KLNT_VOORVOEGSELS
+            3: KLNT_NAAM	
+            4: BIAG_AFDELING_NUMMER	
+            5-16: honosAnswers 12x
+            17: ZVT dataset
+            */
+            
             int[] honosAnswers = new int[12];
-            int zorgtype = Integer.parseInt(line.get(13));
+            String locatie = line.get(4);
+            int zorgtype = Integer.parseInt(line.get(17));
 
-            for (int i = 1; i < 13; i++) {
-                honosAnswers[i - 1] = Integer.parseInt(line.get(i));
+            for (int i = 0; i < 12; i++) {
+                honosAnswers[i] = Integer.parseInt(line.get(i + 5));
             }
-            Patient patient = new Patient(honosAnswers);
+            Patient patient = new Patient(honosAnswers, locatie);
             PatientWithZVT WithZVT = new PatientWithZVT(patient, zorgtype);
             patients.add(WithZVT);
         }
@@ -118,7 +128,7 @@ public class Main {
         return patients;
     }
 
-    public static ArrayList<Patient> readInputfileToBeTypedPatients() throws IOException, Exception {
+    /*public static ArrayList<Patient> readInputfileToBeTypedPatients() throws IOException, Exception {
         String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamenmetcorrectie.csv";
         ArrayList<Patient> patients = new ArrayList<Patient>();
         ReadCSVFile readCSVFile = new ReadCSVFile();
@@ -135,6 +145,7 @@ public class Main {
 
         return patients;
     }
+    */
 
     public static int crossvalidate(ArrayList<PatientWithZVT> trainingdata, double z, boolean verbose) throws IOException, Exception {
 

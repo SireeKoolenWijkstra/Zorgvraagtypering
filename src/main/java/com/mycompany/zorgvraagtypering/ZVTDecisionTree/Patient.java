@@ -12,9 +12,11 @@ package com.mycompany.zorgvraagtypering.ZVTDecisionTree;
 public class Patient {
     
     int [] honosScore;
+    String locatie; 
     
-    public Patient(int[] i){
+    public Patient(int[] i, String locatie){
         this.honosScore = i;
+        this.locatie = locatie;
     }
 
     
