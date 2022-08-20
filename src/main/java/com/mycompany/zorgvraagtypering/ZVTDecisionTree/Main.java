@@ -23,8 +23,8 @@ public class Main {
     public static void main(String[] args) throws IOException, Exception {
         String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleesbestandHonosBasis.csv";
         
-        //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69 according to sorry, according to my calculations 3,4 is the most optimal value.
-        double z = 3.4;
+        //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69 according to sorry, according to my calculations 2.09 is the most optimal value.
+        double z = 2.09;
 
         /*
         test om calculate error te testen
