@@ -21,8 +21,10 @@ public class Main {
      */
 
     public static void main(String[] args) throws IOException, Exception {
-        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
-
+        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamenmetcorrectie.csv";
+        
+        //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69 according to sorry, according to my calculations 3,4 is the most optimal value.
+        double z = 3.4;
 
         /*
         test om calculate error te testen
@@ -37,9 +39,10 @@ public class Main {
         ArrayList<PatientWithZVT> trainingdata = readtrainingdata(inleespatientsdata);
 
             
-            crossvalidate(trainingdata);
-            TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata);
+            crossvalidate(trainingdata, z, true);
+            TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata, z);
             treeAndEDecisiontree.decisiontree.print("");
+            giveOverviewZ(trainingdata);
 
     }
 
@@ -116,7 +119,7 @@ public class Main {
     }
 
     public static ArrayList<Patient> readInputfileToBeTypedPatients() throws IOException, Exception {
-        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamen.csv";
+        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamenmetcorrectie.csv";
         ArrayList<Patient> patients = new ArrayList<Patient>();
         ReadCSVFile readCSVFile = new ReadCSVFile();
 
@@ -133,7 +136,7 @@ public class Main {
         return patients;
     }
 
-    public static void crossvalidate(ArrayList<PatientWithZVT> trainingdata) throws IOException, Exception {
+    public static int crossvalidate(ArrayList<PatientWithZVT> trainingdata, double z, boolean verbose) throws IOException, Exception {
 
         int goed = 0;
         int fout = 0;
@@ -144,19 +147,30 @@ public class Main {
         for (int i = 0; i < trainingdata.size(); i++) {
             ArrayList<PatientWithZVT> workdata = (ArrayList<PatientWithZVT>) trainingdata.clone();
             workdata.remove(i);
-            TreeAndE treeAndEDecisiontree = DecisionTree.createNode(workdata);
+            TreeAndE treeAndEDecisiontree = DecisionTree.createNode(workdata, z);
             int ZVT = treeAndEDecisiontree.decisiontree.typeer(trainingdata.get(i).patient);
 
             if (ZVT == trainingdata.get(i).zorgvraagtype) {
                 goed++;
             } else {
-                System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);
+                if (verbose){
+                System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);}
                 fout++;
             }
         }
-        System.out.println(goed + ";" + fout + ";");
-        
+        if(verbose){System.out.println(goed + ";" + fout + ";");}
+        return fout;
 
+    }
+    
+    public static void giveOverviewZ(ArrayList<PatientWithZVT> trainingsdata) throws Exception{
+
+                for (double z = 0; z < 8.0; z = z + 0.01){
+                    
+                    System.out.println( z + " " + crossvalidate(trainingsdata, z, false));
+                }
+                
+                
     }
 
 }

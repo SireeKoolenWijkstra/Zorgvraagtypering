@@ -92,12 +92,12 @@ public interface DecisionTree {
         stap 5b:als hun gecombineerde e kleiner of gelijk is, herhaal de stappen voor zowel de linker child 
                 node als de rechter childe node
      */
-    public static TreeAndE createNode(ArrayList<PatientWithZVT> trainingGroup) {
+    public static TreeAndE createNode(ArrayList<PatientWithZVT> trainingGroup, double z) {
         //Kijk of alle patiënten dezelfde zorgvraagtypering hebben, zo ja dan return je een nodeleaf
         int zorgvraagtypering = trainingGroup.get(0).zorgvraagtype;
 
         //stap 3.1 pruning
-        double e = calculateTrueErrorValue(trainingGroup);
+        double e = calculateTrueErrorValue(trainingGroup, z);
 
         boolean oneZorgvraagtypering = true;
         for (var pt : trainingGroup) {
@@ -157,8 +157,8 @@ public interface DecisionTree {
         if (goodSplitofPatientsLeft == null) {
             return new TreeAndE(new NodeLeaf(meestVoorkomendeZVTInGroep), e);
         }
-        TreeAndE leftChildNode = createNode(goodSplitofPatientsLeft);
-        TreeAndE rightChildNode = createNode(goodSplitofPatientsRight);
+        TreeAndE leftChildNode = createNode(goodSplitofPatientsLeft, z);
+        TreeAndE rightChildNode = createNode(goodSplitofPatientsRight, z);
 
         //zie stap 3.2a en 3.2b en 3.3 errorwaarde van de NodeFork (is het gewogen gemiddelde van de errorwaarden van de kinderen), niet te verwarren met e, 
         //de errorwaarde van de LeafNode 
@@ -186,7 +186,8 @@ public interface DecisionTree {
 
     }
 
-    public static double calculateTrueErrorValue(ArrayList<PatientWithZVT> trainingGroup) {
+    public static double calculateTrueErrorValue(ArrayList<PatientWithZVT> trainingGroup, double z) {
+        
         //N is totaal aantal pt's in node
         int N = trainingGroup.size();
         int[] ptperZVT = tel_PtperZVT(trainingGroup);
@@ -204,8 +205,8 @@ public interface DecisionTree {
         //doubledivision
         double f = (double) E / N;
         //e is de ophoging van f naar een pessimistich geschatte echte errorwaarde, berekening is terug te vinden op 
-        //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69 according to sorry, according to my calculations 19.1 is the most optimal value. 
-        double z = 19.1;
+        //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69 according to sorry, according to my calculations 3,4 is the most optimal value. 
+//        
         double e = (f + ((z * z) / (2 * N)) + z * Math.sqrt((f / N) - ((f * f) / N) + ((z * z) / (4 * N * N)))) / (1 + (z * z) / N);
         return e;
     }
