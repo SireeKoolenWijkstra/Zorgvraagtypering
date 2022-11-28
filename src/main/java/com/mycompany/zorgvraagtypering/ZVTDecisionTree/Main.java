@@ -19,10 +19,9 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-
     public static void main(String[] args) throws IOException, Exception {
-        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleesbestandHonosBasis.csv";
-        
+        String inleespatientsdata = "C:\\Users\\Siree\\Documents\\School\\PPT-ICT\\Onderzoeksrapport\\bronnen\\inleespatientNCzondernamenmetcorrectie (1).csv";
+
         //https://sorry.vse.cz/~berka/docs/4iz451/dm07-decision-tree-c45.pdf, z is 0,69 according to sorry, according to my calculations 2.09 is the most optimal value.
         double z = 2.09;
 
@@ -38,11 +37,12 @@ public class Main {
          */
         ArrayList<PatientWithZVT> trainingdata = readtrainingdata(inleespatientsdata);
 
-            
-            crossvalidate(trainingdata, z, true);
-            TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata, z);
-            treeAndEDecisiontree.decisiontree.print("");
-            giveOverviewZ(trainingdata);
+        crossvalidate(trainingdata, z, true);
+        TreeAndE treeAndEDecisiontree = DecisionTree.createNode(trainingdata, z);
+        treeAndEDecisiontree.decisiontree.print("");
+        System.out.println("trainingserror:");
+        printErrors(trainingdata, treeAndEDecisiontree.decisiontree);
+        giveOverviewZ(trainingdata);
 
     }
 
@@ -111,8 +111,8 @@ public class Main {
             4: BIAG_AFDELING_NUMMER	
             5-16: honosAnswers 12x
             17: ZVT dataset
-            */
-            
+             */
+
             int[] honosAnswers = new int[12];
             String locatie = line.get(4);
             int zorgtype = Integer.parseInt(line.get(17));
@@ -145,8 +145,7 @@ public class Main {
 
         return patients;
     }
-    */
-
+     */
     public static int crossvalidate(ArrayList<PatientWithZVT> trainingdata, double z, boolean verbose) throws IOException, Exception {
 
         int goed = 0;
@@ -164,24 +163,35 @@ public class Main {
             if (ZVT == trainingdata.get(i).zorgvraagtype) {
                 goed++;
             } else {
-                if (verbose){
-                System.out.println(i + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);}
+                if (verbose) {
+                    System.out.println(trainingdata.get(i).patient.locatie + ": " + ZVT + " moet zijn " + trainingdata.get(i).zorgvraagtype);
+                }
                 fout++;
             }
         }
-        if(verbose){System.out.println(goed + ";" + fout + ";");}
+        if (verbose) {
+            System.out.println(goed + ";" + fout + ";");
+        }
         return fout;
 
     }
-    
-    public static void giveOverviewZ(ArrayList<PatientWithZVT> trainingsdata) throws Exception{
 
-                for (double z = 0; z < 8.0; z = z + 0.01){
-                    
-                    System.out.println( z + " " + crossvalidate(trainingsdata, z, false));
-                }
-                
-                
+    public static void giveOverviewZ(ArrayList<PatientWithZVT> trainingsdata) throws Exception {
+
+        for (double z = 0; z < 8.0; z = z + 0.01) {
+
+            System.out.println(z + " " + crossvalidate(trainingsdata, z, false));
+        }
+
+    }
+
+    public static void printErrors(ArrayList<PatientWithZVT> trainingsdata, DecisionTree decisiontree) {
+        for (PatientWithZVT patient : trainingsdata) {
+            int dtZVT = decisiontree.typeer(patient.patient);
+            if (patient.zorgvraagtype != dtZVT) {
+                System.out.println(patient.patient.locatie + ": " + dtZVT + " moet zijn " + patient.zorgvraagtype);
+            }
+        }
     }
 
 }
